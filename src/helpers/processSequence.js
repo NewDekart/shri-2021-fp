@@ -50,6 +50,8 @@ const isValueValid = compose(
     getValue
 )
 
+const isValueNotValid = complement(isValueValid)
+
 const parseIntFromValue = compose(
     Math.round,
     parseFloat,
@@ -62,8 +64,6 @@ const getBinaryValue = (value) => getTech({from: 10, to: 2, number: value})
 const getAnimalById = (id) => api.get(`https://animals.tech/${id}`)({})
 
 const logError = (data) => getHandleError(data)('Validation Error')
-
-const isValueNotValid = complement(isValueValid)
 
 const square = curry(Math.pow)(__, 2)
 const threeDelimeter = (value) => value % 3
@@ -79,20 +79,25 @@ const processSequence = (data) => {
     )
 
     const result = compose(
-        andThen(handleSuccess),
-        andThen(getResult),
-        andThen(getAnimalById),
-        andThen(tap(writeLog)),
-        andThen(threeDelimeter),
-        andThen(tap(writeLog)),
-        andThen(square),
-        andThen(tap(writeLog)),
-        andThen(getLength),
-        andThen(tap(writeLog)),
-        andThen(getResult),
-        getBinaryValue,
-        tap(writeLog),
-        parseIntFromValue,
+        when(
+            isValueValid,
+            compose(
+                andThen(handleSuccess),
+                andThen(getResult),
+                andThen(getAnimalById),
+                andThen(tap(writeLog)),
+                andThen(threeDelimeter),
+                andThen(tap(writeLog)),
+                andThen(square),
+                andThen(tap(writeLog)),
+                andThen(getLength),
+                andThen(tap(writeLog)),
+                andThen(getResult),
+                getBinaryValue,
+                tap(writeLog),
+                parseIntFromValue,
+            )
+        ),
         when(
             isValueNotValid,
             tap(logError)
