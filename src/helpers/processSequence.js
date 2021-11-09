@@ -15,7 +15,8 @@
  * Ответ будет приходить в поле {result}
  */
 import Api from '../tools/api';
-import { compose, lt, prop, tap, gt, match, allPass, when, complement, andThen, curry, __ } from 'ramda';
+import { compose, lt, prop, tap, gt, test, allPass, when, complement, andThen, curry, __ } from 'ramda';
+import { toInteger } from 'lodash';
 
 const api = new Api();
 
@@ -29,7 +30,7 @@ const getHandleSuccess = prop('handleSuccess');
 const isLessThenTen = gt(10);
 const isGreaterThenTwo = lt(2);
 const isGreaterThenZero = lt(0);
-const isNumber = match(/^[\d]+.{0,1}[\d]*$/);
+const isNumber = test(/^[0-9]+\.{0,1}[0-9]+$/);
 const isValueLengthValid = compose(
     allPass([
         isLessThenTen,
@@ -39,7 +40,7 @@ const isValueLengthValid = compose(
 )
 const isValueGreaterThanZero = compose(
     isGreaterThenZero,
-    parseFloat
+    toInteger
 )
 const isValueValid = compose(
     allPass([
